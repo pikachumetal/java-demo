@@ -20,7 +20,7 @@ public class MessageRepository extends BaseRepository<Message, String> {
         var cr = cb.createQuery(repositoryClass);
 
         var message = cr.from(repositoryClass);
-        var idPredicate = cb.equal(message.get("id"), authorId);
+        var idPredicate = cb.equal(message.get("author").get("id"), authorId);
         cr.where(idPredicate);
 
         var query = entityManager.createQuery(cr);
