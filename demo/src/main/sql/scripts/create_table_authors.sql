@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS authors;
+
+CREATE TABLE authors(
+    id char(36) PRIMARY KEY,
+    first_name VARCHAR(128) NOT NULL,
+    last_name VARCHAR(128) NOT NULL ,
+    created_at TIMESTAMP NOT NULL DEFAULT (UTC_TIMESTAMP),
+    updated_at TIMESTAMP NOT NULL DEFAULT (UTC_TIMESTAMP),
+    deleted_at TIMESTAMP NULL,
+    PRIMARY KEY (id)
+);
