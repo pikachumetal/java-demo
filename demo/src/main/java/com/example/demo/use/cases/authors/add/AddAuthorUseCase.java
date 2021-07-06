@@ -3,7 +3,7 @@ package com.example.demo.use.cases.authors.add;
 import com.example.demo.domain.Author;
 import com.example.demo.persistence.UnitOfWork;
 import com.example.demo.persistence.repositories.AuthorRepository;
-import com.example.demo.problems.AuthorEmailExistsProblem;
+import com.example.demo.problems.author.AuthorEmailExistsProblem;
 import com.example.demo.use.cases.infrastructure.BaseUseCase;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;

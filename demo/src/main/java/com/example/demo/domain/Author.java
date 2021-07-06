@@ -1,12 +1,12 @@
 package com.example.demo.domain;
 
 import manifold.ext.props.rt.api.var;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
-import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ public class Author extends AggregateRoot<String> implements Serializable {
     String email;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Where(clause = "deleted = false")
     private final List<Message> messages;
 
     public Author() {

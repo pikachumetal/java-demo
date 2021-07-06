@@ -2,7 +2,7 @@ package com.example.demo.use.cases.authors.delete;
 
 import com.example.demo.persistence.UnitOfWork;
 import com.example.demo.persistence.repositories.AuthorRepository;
-import com.example.demo.problems.AuthorNonExistsProblem;
+import com.example.demo.problems.author.AuthorNonExistsProblem;
 import com.example.demo.use.cases.infrastructure.BaseUseCase;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

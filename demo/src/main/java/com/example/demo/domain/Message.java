@@ -15,8 +15,8 @@ import java.util.UUID;
 @Entity(name = "Message")
 @Table(name = "messages")
 @SQLDelete(sql = "UPDATE messages SET deleted=true WHERE id=? AND deleted=false")
-@FilterDef(name = "deletedMessageFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
-@Filter(name = "deletedMessageFilter", condition = "deleted = :isDeleted")
+@FilterDef(name = "noDeletedMessage", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+@Filter(name = "noDeletedMessage", condition = "deleted = :isDeleted")
 public class Message extends AggregateRoot<String> implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authors_id", nullable = false)
