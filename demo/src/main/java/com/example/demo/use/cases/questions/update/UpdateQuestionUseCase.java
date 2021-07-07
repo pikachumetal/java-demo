@@ -27,7 +27,7 @@ public class UpdateQuestionUseCase
 
         var result = new UpdateQuestionResult();
         result.question = updateMessage(unitOfWork, parameters);
-        Hibernate.initialize(result.question.category);
+        Hibernate.initialize(result.question.topic);
 
         return result;
     }

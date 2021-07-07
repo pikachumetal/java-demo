@@ -1,6 +1,6 @@
 package com.example.demo.use.cases.infrastructure;
 
-import com.example.demo.domain.Category;
+import com.example.demo.domain.Topic;
 import com.example.demo.domain.Question;
 import com.example.demo.persistence.UnitOfWork;
 import com.example.demo.problems.GenericProblem;
@@ -57,7 +57,7 @@ public abstract class BaseUseCase<TIn, TOut> implements UseCase<TIn, TOut> {
                 .unwrap(Session.class);
 
         var filters = Arrays.asList(
-                Category.class.getSimpleName(),
+                Topic.class.getSimpleName(),
                 Question.class.getSimpleName()
         );
 

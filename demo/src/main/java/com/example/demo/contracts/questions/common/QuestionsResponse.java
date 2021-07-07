@@ -4,7 +4,7 @@ import manifold.ext.props.rt.api.var;
 
 import java.util.List;
 
-public class MessagesResponse {
+public class QuestionsResponse {
     @var
-    List<MessageResponse> messages;
+    List<QuestionResponse> questions;
 }

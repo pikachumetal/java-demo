@@ -1,8 +1,8 @@
 package com.example.demo.persistence.runners;
 
-import com.example.demo.domain.Category;
+import com.example.demo.domain.Topic;
 import com.example.demo.persistence.UnitOfWork;
-import com.example.demo.persistence.repositories.CategoryRepository;
+import com.example.demo.persistence.repositories.TopicRepository;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,7 +19,7 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        var repository = new CategoryRepository(unitOfWork);
+        var repository = new TopicRepository(unitOfWork);
 
         unitOfWork.begin();
 
@@ -27,7 +27,7 @@ public class DatabaseLoader implements CommandLineRunner {
                 .findByDescription("General");
 
         if (author.isEmpty()) repository
-                .save(new Category("General", "frodo.bolson@hobbiton.com"));
+                .save(new Topic("General", "frodo.bolson@hobbiton.com"));
 
         unitOfWork.commit();
     }

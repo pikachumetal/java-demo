@@ -24,7 +24,7 @@ public class GetQuestionsUseCase
 
         var result = new GetQuestionsResult();
         result.questions = repository.findAll();
-        result.questions.forEach(o-> Hibernate.initialize(o.category));
+        result.questions.forEach(o-> Hibernate.initialize(o.topic));
 
         return result;
     }

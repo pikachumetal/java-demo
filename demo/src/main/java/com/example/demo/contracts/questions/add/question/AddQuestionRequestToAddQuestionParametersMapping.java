@@ -11,6 +11,7 @@ public class AddQuestionRequestToAddQuestionParametersMapping
     protected void configure() {
         map().query = source.query;
         map().email = source.email;
-        map().categoryId = source.categoryId;
+        map().answers = source.answers;
+        map().topicId = source.topicId;
     }
 }

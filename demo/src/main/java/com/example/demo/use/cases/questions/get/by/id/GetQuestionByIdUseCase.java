@@ -26,7 +26,7 @@ public class GetQuestionByIdUseCase
 
         var result = new GetQuestionByIdResult();
         result.message = repository.findById(parameters.id);
-        result.message.ifPresent(message -> Hibernate.initialize(message.category));
+        result.message.ifPresent(message -> Hibernate.initialize(message.topic));
 
         return result;
     }

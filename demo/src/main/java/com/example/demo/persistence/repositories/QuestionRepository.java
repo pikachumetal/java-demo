@@ -24,12 +24,12 @@ public class QuestionRepository extends BaseRepository<Question, String> {
         return query.getSingleOrDefault();
     }
 
-    public List<Question> findByCategoryId(String categoryId) {
+    public List<Question> findByTopicId(String topicId) {
         var cb = entityManager.getCriteriaBuilder();
         var cr = cb.createQuery(repositoryClass);
 
         var message = cr.from(repositoryClass);
-        var idPredicate = cb.equal(message.get("category").get("id"), categoryId);
+        var idPredicate = cb.equal(message.get("topic").get("id"), topicId);
         cr.where(idPredicate);
 
         var query = entityManager.createQuery(cr);

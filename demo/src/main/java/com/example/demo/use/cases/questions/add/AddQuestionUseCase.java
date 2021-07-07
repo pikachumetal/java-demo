@@ -1,9 +1,10 @@
 package com.example.demo.use.cases.questions.add;
 
-import com.example.demo.domain.Category;
+import com.example.demo.domain.Topic;
 import com.example.demo.domain.Question;
 import com.example.demo.persistence.UnitOfWork;
-import com.example.demo.problems.category.CategoryNonExistsProblem;
+import com.example.demo.problems.topic.TopicInactiveProblem;
+import com.example.demo.problems.topic.TopicNonExistsProblem;
 import com.example.demo.use.cases.infrastructure.BaseUseCase;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,8 @@ public class AddQuestionUseCase
             UnitOfWork unitOfWork,
             AddQuestionParameters parameters
     ) {
-        assertCategoryExists(unitOfWork, parameters.categoryId);
+        assertTopicExists(unitOfWork, parameters.topicId);
+        assertTopicIsActive(unitOfWork, parameters.topicId);
 
         var result = new AddQuestionResult();
         result.question = addQuestion(unitOfWork, parameters);
@@ -39,24 +41,36 @@ public class AddQuestionUseCase
         var repository = unitOfWork.getQuestionRepository();
 
         var item = new Question(parameters.query, parameters.email);
-        item.category = getCategoryById(unitOfWork, parameters.categoryId);
+        item.answers = parameters.answers;
+        item.topic = getTopicById(unitOfWork, parameters.topicId);
 
         return repository.save(item);
     }
 
-    private Category getCategoryById(UnitOfWork unitOfWork, String id) {
-        var repository = unitOfWork.getCategoryRepository();
+    private Topic getTopicById(UnitOfWork unitOfWork, String id) {
+        var repository = unitOfWork.getTopicRepository();
         return repository.findById(id).orElseThrow();
     }
 
-    public void assertCategoryExists(
+    public void assertTopicExists(
             UnitOfWork unitOfWork,
-            String categoryId
+            String topicId
     ) {
-        var repository = unitOfWork.getCategoryRepository();
-        var item = repository.findById(categoryId);
+        var repository = unitOfWork.getTopicRepository();
+        var item = repository.findById(topicId);
 
         if (item.isPresent()) return;
-        throw new CategoryNonExistsProblem(categoryId);
+        throw new TopicNonExistsProblem(topicId);
+    }
+
+    public void assertTopicIsActive(
+            UnitOfWork unitOfWork,
+            String topicId
+    ) {
+        var repository = unitOfWork.getTopicRepository();
+        var item = repository.findById(topicId).orElseThrow();
+
+        if (item.active) return;
+        throw new TopicInactiveProblem(topicId);
     }
 }

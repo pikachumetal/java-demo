@@ -11,7 +11,7 @@ import java.time.Instant;
 
 @MappedSuperclass
 // @Where(clause = "deleted = false")
-// @SQLDelete(sql = "UPDATE categories SET deleted=true WHERE id=? AND deleted=false")
+// @SQLDelete(sql = "UPDATE topics SET deleted=true WHERE id=? AND deleted=false")
 // @FilterDef(name = "deletedCarFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
 // @Filter(name = "deletedCarFilter", condition = "deleted = :isDeleted")
 public abstract class AggregateRoot<ID> implements Serializable, Persistable<ID> {

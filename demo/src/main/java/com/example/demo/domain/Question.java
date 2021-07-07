@@ -9,6 +9,8 @@ import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -19,14 +21,19 @@ import java.util.UUID;
 @Filter(name = "noDeletedQuestion", condition = ":showDeleted OR deleted = :showDeleted")
 public class Question extends AggregateRoot<String> implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "topic_id", nullable = false)
     @var
-    Category category;
+    Topic topic;
 
     @Column(name = "query", columnDefinition = "NVARCHAR(512)", nullable = false)
     @Basic(optional = false)
     @var
     String query;
+
+    @ElementCollection
+    @CollectionTable(name = "answers", joinColumns = @JoinColumn(name = "question_id"))
+    @var
+    List<String> answers;
 
     @Column(name = "email", columnDefinition = "NVARCHAR(128)", nullable = false)
     @Basic(optional = false)
@@ -51,6 +58,8 @@ public class Question extends AggregateRoot<String> implements Serializable {
 
         this.query = query;
         this.email = email;
+        this.answers = new LinkedList<>();
+
         this.deleted = false;
         this.active = true;
 
@@ -67,7 +76,7 @@ public class Question extends AggregateRoot<String> implements Serializable {
                 Objects.equals(query, item.query) &&
                 Objects.equals(email, item.email) &&
                 Objects.equals(active, item.active) &&
-                Objects.equals(category, item.category);
+                Objects.equals(topic, item.topic);
     }
 
     @Override
@@ -82,7 +91,7 @@ public class Question extends AggregateRoot<String> implements Serializable {
                 ", question='" + query + '\'' +
                 ", email='" + email + '\'' +
                 ", active='" + active + '\'' +
-                ", category='" + category + '\'' +
+                ", topic='" + topic + '\'' +
                 '}';
     }
 }

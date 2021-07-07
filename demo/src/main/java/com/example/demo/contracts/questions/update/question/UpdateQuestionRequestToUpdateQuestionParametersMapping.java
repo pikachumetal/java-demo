@@ -11,5 +11,6 @@ public class UpdateQuestionRequestToUpdateQuestionParametersMapping
     protected void configure() {
         map().query = source.query;
         map().email = source.email;
+        map().answers = source.answers;
     }
 }

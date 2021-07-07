@@ -4,13 +4,12 @@ import com.example.demo.contracts.questions.add.question.AddQuestionRequest;
 import com.example.demo.contracts.questions.common.QuestionResponse;
 import com.example.demo.contracts.questions.common.QuestionsResponse;
 import com.example.demo.contracts.questions.update.question.UpdateQuestionRequest;
-import com.example.demo.problems.GenericProblem;
 import com.example.demo.use.cases.questions.add.AddQuestionParameters;
 import com.example.demo.use.cases.questions.add.AddQuestionUseCase;
 import com.example.demo.use.cases.questions.delete.DeleteQuestionParameters;
 import com.example.demo.use.cases.questions.delete.DeleteQuestionUseCase;
-import com.example.demo.use.cases.questions.get.by.category.id.GetQuestionsByCategoryIdParameters;
-import com.example.demo.use.cases.questions.get.by.category.id.GetQuestionsByCategoryIdUseCase;
+import com.example.demo.use.cases.questions.get.by.topic.id.GetQuestionsByTopicIdParameters;
+import com.example.demo.use.cases.questions.get.by.topic.id.GetQuestionsByTopicIdUseCase;
 import com.example.demo.use.cases.questions.get.by.id.GetQuestionByIdParameters;
 import com.example.demo.use.cases.questions.get.by.id.GetQuestionByIdUseCase;
 import com.example.demo.use.cases.questions.list.GetQuestionsParameters;
@@ -57,19 +56,19 @@ public class QuestionsController {
     }
 
     @Autowired
-    private GetQuestionsByCategoryIdUseCase getQuestionsByCategoryIdUseCase;
+    private GetQuestionsByTopicIdUseCase getQuestionsByTopicIdUseCase;
 
-    @RequestMapping(value = "/categories/{id}",
+    @RequestMapping(value = "/topics/{id}",
             method = RequestMethod.GET,
             produces = "application/json")
     @ResponseBody
-    public ResponseEntity<QuestionsResponse> getQuestionsByCategoryId(
+    public ResponseEntity<QuestionsResponse> getQuestionsByTopicId(
             @PathVariable("id") String id
     ) throws Exception {
-        var parameters = new GetQuestionsByCategoryIdParameters();
+        var parameters = new GetQuestionsByTopicIdParameters();
         parameters.id = id;
 
-        var result = getQuestionsByCategoryIdUseCase.execute(parameters);
+        var result = getQuestionsByTopicIdUseCase.execute(parameters);
 
         var response = new QuestionsResponse();
         response.questions = result.questions.stream()

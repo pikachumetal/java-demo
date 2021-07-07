@@ -13,7 +13,8 @@ public class QuestionToQuestionResponseMapping
         map().query = source.query;
         map().active = source.active;
         map().email = source.email;
-        map(source.category, destination.category);
+        map().answers = source.answers;
+        map(source.topic, destination.topic);
         map().created = source.created;
         map().updated = source.updated;
     }
