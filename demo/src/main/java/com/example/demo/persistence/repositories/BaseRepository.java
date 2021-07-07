@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-public class BaseRepository<T extends AggregateRoot<ID>, ID> {
+public abstract class BaseRepository<T extends AggregateRoot<ID>, ID> {
     protected final EntityManager entityManager;
     protected final Class<T> repositoryClass;
 

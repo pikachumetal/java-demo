@@ -2,6 +2,7 @@ package com.example.demo.use.cases.topics.get.by.id;
 
 import com.example.demo.persistence.UnitOfWork;
 import com.example.demo.use.cases.infrastructure.BaseUseCase;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class GetTopicByIdUseCase
 
         var result = new GetTopicByIdResult();
         result.topic = repository.findById(parameters.id);
+        result.topic.ifPresent(o -> Hibernate.initialize(o.questions));
+
         return result;
     }
 }

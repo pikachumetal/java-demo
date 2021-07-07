@@ -30,8 +30,8 @@ public class Question extends AggregateRoot<String> implements Serializable {
     @var
     String query;
 
-    @ElementCollection
-    @CollectionTable(name = "answers", joinColumns = @JoinColumn(name = "question_id"))
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "answers",  joinColumns = @JoinColumn(name = "question_id"))
     @var
     List<String> answers;
 
@@ -46,19 +46,19 @@ public class Question extends AggregateRoot<String> implements Serializable {
     boolean active;
 
     public Question() {
-        this(UUID.randomUUID().toString(), "", "", Instant.now(), Instant.now());
+        this(UUID.randomUUID().toString(), "", "", new LinkedList<>(), Instant.now(), Instant.now());
     }
 
-    public Question(String query, String email) {
-        this(UUID.randomUUID().toString(), query, email, Instant.now(), Instant.now());
+    public Question(String query, String email, List<String> answers) {
+        this(UUID.randomUUID().toString(), query, email, answers, Instant.now(), Instant.now());
     }
 
-    public Question(String id, String query, String email, Instant created, Instant updated) {
+    public Question(String id, String query, String email, List<String> answers, Instant created, Instant updated) {
         this.id = id;
 
         this.query = query;
         this.email = email;
-        this.answers = new LinkedList<>();
+        this.answers = answers;
 
         this.deleted = false;
         this.active = true;

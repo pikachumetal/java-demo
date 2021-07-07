@@ -7,27 +7,27 @@ import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.Optional;
 
-public class TopicRepository extends BaseRepository<Topic,String>{
+public class TopicRepository extends BaseRepository<Topic, String> {
 
     public TopicRepository(UnitOfWork unitOfWork) {
         super(Topic.class, unitOfWork);
     }
 
     @Modifying
-    public Optional<Topic> toggle(String id){
-        var topic = findById(id).orElseThrow();
-        topic.active = !topic.active;
-        return Optional.of(topic);
+    public Optional<Topic> toggle(String id) {
+        var item = findById(id).orElseThrow();
+        item.active = !item.active;
+        return Optional.of(item);
     }
 
     @Modifying
-    public Optional<Topic> update(String id, Topic topic){
-        var oldTopic = findById(id).orElseThrow();
+    public Optional<Topic> update(String id, Topic item) {
+        var oldItem = findById(id).orElseThrow();
 
-        oldTopic.description = topic.description;
-        oldTopic.email = topic.email;
+        oldItem.description = item.description;
+        oldItem.email = item.email;
 
-        return Optional.of(oldTopic);
+        return Optional.of(oldItem);
     }
 
     public Optional<Topic> findByEmail(String email) {
@@ -54,5 +54,15 @@ public class TopicRepository extends BaseRepository<Topic,String>{
 
         var query = entityManager.createQuery(criteriaQuery);
         return query.getSingleOrDefault();
+    }
+
+    @Override
+    public void delete(String id) {
+        var item = findById(id).orElseThrow();
+
+        item.questions.forEach(this.entityManager::remove);
+        this.entityManager.remove(item);
+        
+        entityManager.flush();
     }
 }

@@ -11,6 +11,4 @@ public class AddQuestionRequest {
     String email;
     @var
     List<String> answers;
-    @var
-    String topicId;
 }

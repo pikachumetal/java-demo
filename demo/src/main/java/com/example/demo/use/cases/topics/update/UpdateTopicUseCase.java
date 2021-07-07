@@ -6,6 +6,7 @@ import com.example.demo.persistence.repositories.TopicRepository;
 import com.example.demo.problems.topic.TopicDescriptionExistsProblem;
 import com.example.demo.problems.topic.TopicNonExistsProblem;
 import com.example.demo.use.cases.infrastructure.BaseUseCase;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class UpdateTopicUseCase
 
         var result = new UpdateTopicResult();
         result.topic = updateTopic(unitOfWork, parameters);
+        Hibernate.initialize(result.topic.questions);
+
         return result;
     }
 
@@ -39,7 +42,8 @@ public class UpdateTopicUseCase
         var repository = unitOfWork.getTopicRepository();
 
         var item = repository
-                .update(parameters.id, new Topic(parameters.description, parameters.email))
+                .update(parameters.id,
+                        new Topic(parameters.description, parameters.email))
                 .orElseThrow();
 
         return repository.save(item);

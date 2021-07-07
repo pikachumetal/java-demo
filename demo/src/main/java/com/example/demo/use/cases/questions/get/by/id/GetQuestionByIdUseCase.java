@@ -25,8 +25,8 @@ public class GetQuestionByIdUseCase
         if (parameters.showDeleted) setDisableFilter(unitOfWork, "noDeletedQuestion");
 
         var result = new GetQuestionByIdResult();
-        result.message = repository.findById(parameters.id);
-        result.message.ifPresent(message -> Hibernate.initialize(message.topic));
+        result.question = repository.findById(parameters.id);
+        result.question.ifPresent(o -> Hibernate.initialize(o.topic));
 
         return result;
     }

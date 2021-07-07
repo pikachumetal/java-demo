@@ -1,11 +1,12 @@
 package com.example.demo.controllers;
 
-import com.example.demo.contracts.questions.common.QuestionResponse;
+import com.example.demo.contracts.topics.add.topic.AddTopicParametersMapper;
 import com.example.demo.contracts.topics.add.topic.AddTopicRequest;
-import com.example.demo.contracts.topics.common.TopicsResponse;
 import com.example.demo.contracts.topics.common.TopicResponse;
+import com.example.demo.contracts.topics.common.TopicResponseMapper;
+import com.example.demo.contracts.topics.common.TopicsResponse;
+import com.example.demo.contracts.topics.update.topic.UpdateTopicParametersMapper;
 import com.example.demo.contracts.topics.update.topic.UpdateTopicRequest;
-import com.example.demo.use.cases.topics.add.AddTopicParameters;
 import com.example.demo.use.cases.topics.add.AddTopicUseCase;
 import com.example.demo.use.cases.topics.delete.DeleteTopicParameters;
 import com.example.demo.use.cases.topics.delete.DeleteTopicUseCase;
@@ -15,28 +16,22 @@ import com.example.demo.use.cases.topics.list.GetTopicsParameters;
 import com.example.demo.use.cases.topics.list.GetTopicsUseCase;
 import com.example.demo.use.cases.topics.toggle.ToggleTopicParameters;
 import com.example.demo.use.cases.topics.toggle.ToggleTopicUseCase;
-import com.example.demo.use.cases.topics.update.UpdateTopicParameters;
 import com.example.demo.use.cases.topics.update.UpdateTopicUseCase;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/topics")
-@SuppressWarnings("unused")
 public class TopicsController {
 
-    @SuppressWarnings("unused")
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @SuppressWarnings("unused")
     @Autowired
     private GetTopicsUseCase getTopicsUseCase;
+
+    @Autowired
+    private TopicResponseMapper topicResponseMapper;
 
     @RequestMapping(value = "",
             method = RequestMethod.GET,
@@ -48,18 +43,13 @@ public class TopicsController {
         var result = getTopicsUseCase.execute(parameters);
 
         var response = new TopicsResponse();
-        response.topics = mapList(result.topics, TopicResponse.class);
+        response.topics = result.topics.stream()
+                .map(o -> topicResponseMapper.topicToTopicResponse(o))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
                 .body(response);
-    }
-
-    <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
-        return source
-                .stream()
-                .map(element -> modelMapper.map(element, targetClass))
-                .collect(Collectors.toList());
     }
 
     @Autowired
@@ -82,7 +72,8 @@ public class TopicsController {
                 .notFound()
                 .build();
 
-        var response = modelMapper.map(result.topic.get(), TopicResponse.class);
+        var response = topicResponseMapper
+                .topicToTopicResponse(result.topic.get());
         return ResponseEntity
                 .ok()
                 .body(response);
@@ -90,6 +81,9 @@ public class TopicsController {
 
     @Autowired
     private AddTopicUseCase addTopicUseCase;
+
+    @Autowired
+    private AddTopicParametersMapper addTopicParameterMapper;
 
     @RequestMapping(value = "",
             method = RequestMethod.POST,
@@ -99,9 +93,12 @@ public class TopicsController {
     public ResponseEntity<TopicResponse> addTopic(
             @RequestBody AddTopicRequest request
     ) throws Exception {
-        var parameters = modelMapper.map(request, AddTopicParameters.class);
+        var parameters = addTopicParameterMapper
+                .addTopicRequestToAddTopicParameters(request);
+
         var result = addTopicUseCase.execute(parameters);
-        var response = modelMapper.map(result.topic, TopicResponse.class);
+        var response = topicResponseMapper
+                .topicToTopicResponse(result.topic);
         return ResponseEntity
                 .ok()
                 .body(response);
@@ -109,6 +106,9 @@ public class TopicsController {
 
     @Autowired
     private UpdateTopicUseCase updateTopicUseCase;
+
+    @Autowired
+    private UpdateTopicParametersMapper updateTopicParametersMapper;
 
     @RequestMapping(value = "/{id}",
             method = RequestMethod.PUT,
@@ -119,11 +119,12 @@ public class TopicsController {
             @PathVariable("id") String id,
             @RequestBody UpdateTopicRequest request
     ) throws Exception {
-        var parameters = modelMapper.map(request, UpdateTopicParameters.class);
-        parameters.id = id;
+        var parameters = updateTopicParametersMapper
+                .updateTopicRequestToUpdateTopicParameters(request, id);
 
         var result = updateTopicUseCase.execute(parameters);
-        var response = modelMapper.map(result.topic, TopicResponse.class);
+        var response = topicResponseMapper
+                .topicToTopicResponse(result.topic);
         return ResponseEntity
                 .ok()
                 .body(response);
@@ -143,7 +144,8 @@ public class TopicsController {
         parameters.id = id;
 
         var result = toggleTopicUseCase.execute(parameters);
-        var response = modelMapper.map(result.topic, TopicResponse.class);
+        var response = topicResponseMapper
+                .topicToTopicResponse(result.topic);
         return ResponseEntity
                 .ok()
                 .body(response);

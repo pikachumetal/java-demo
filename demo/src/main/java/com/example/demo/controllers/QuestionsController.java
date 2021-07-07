@@ -1,22 +1,24 @@
 package com.example.demo.controllers;
 
+import com.example.demo.contracts.questions.add.question.AddQuestionParametersMapper;
 import com.example.demo.contracts.questions.add.question.AddQuestionRequest;
 import com.example.demo.contracts.questions.common.QuestionResponse;
+import com.example.demo.contracts.questions.common.QuestionResponseMapper;
 import com.example.demo.contracts.questions.common.QuestionsResponse;
+import com.example.demo.contracts.questions.update.question.UpdateQuestionParametersMapper;
 import com.example.demo.contracts.questions.update.question.UpdateQuestionRequest;
-import com.example.demo.use.cases.questions.add.AddQuestionParameters;
 import com.example.demo.use.cases.questions.add.AddQuestionUseCase;
 import com.example.demo.use.cases.questions.delete.DeleteQuestionParameters;
 import com.example.demo.use.cases.questions.delete.DeleteQuestionUseCase;
-import com.example.demo.use.cases.questions.get.by.topic.id.GetQuestionsByTopicIdParameters;
-import com.example.demo.use.cases.questions.get.by.topic.id.GetQuestionsByTopicIdUseCase;
 import com.example.demo.use.cases.questions.get.by.id.GetQuestionByIdParameters;
 import com.example.demo.use.cases.questions.get.by.id.GetQuestionByIdUseCase;
+import com.example.demo.use.cases.questions.get.by.topic.id.GetQuestionsByTopicIdParameters;
+import com.example.demo.use.cases.questions.get.by.topic.id.GetQuestionsByTopicIdUseCase;
 import com.example.demo.use.cases.questions.list.GetQuestionsParameters;
 import com.example.demo.use.cases.questions.list.GetQuestionsUseCase;
-import com.example.demo.use.cases.questions.update.UpdateQuestionParameters;
+import com.example.demo.use.cases.questions.toggle.ToggleQuestionParameters;
+import com.example.demo.use.cases.questions.toggle.ToggleQuestionUseCase;
 import com.example.demo.use.cases.questions.update.UpdateQuestionUseCase;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,19 +26,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/v1/questions")
-@SuppressWarnings("unused")
+@RequestMapping("/v1")
 public class QuestionsController {
 
-    @SuppressWarnings("unused")
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @SuppressWarnings("unused")
     @Autowired
     private GetQuestionsUseCase getQuestionsUseCase;
 
-    @RequestMapping(value = "",
+    @Autowired
+    private QuestionResponseMapper questionResponseMapper;
+
+    @RequestMapping(value = "/questions",
             method = RequestMethod.GET,
             produces = "application/json")
     @ResponseBody
@@ -47,7 +46,7 @@ public class QuestionsController {
 
         var response = new QuestionsResponse();
         response.questions = result.questions.stream()
-                .map(o -> modelMapper.map(o, QuestionResponse.class))
+                .map(o -> questionResponseMapper.questionToQuestionResponse(o))
                 .collect(Collectors.toList());
 
         return ResponseEntity
@@ -58,7 +57,7 @@ public class QuestionsController {
     @Autowired
     private GetQuestionsByTopicIdUseCase getQuestionsByTopicIdUseCase;
 
-    @RequestMapping(value = "/topics/{id}",
+    @RequestMapping(value = "/topics/{id}/questions",
             method = RequestMethod.GET,
             produces = "application/json")
     @ResponseBody
@@ -72,7 +71,7 @@ public class QuestionsController {
 
         var response = new QuestionsResponse();
         response.questions = result.questions.stream()
-                .map(o -> modelMapper.map(o, QuestionResponse.class))
+                .map(o -> questionResponseMapper.questionToQuestionResponse(o))
                 .collect(Collectors.toList());
 
         return ResponseEntity
@@ -83,7 +82,7 @@ public class QuestionsController {
     @Autowired
     private GetQuestionByIdUseCase getQuestionByIdUseCase;
 
-    @RequestMapping(value = "/{id}",
+    @RequestMapping(value = "/questions/{id}",
             method = RequestMethod.GET,
             produces = "application/json")
     @ResponseBody
@@ -96,11 +95,12 @@ public class QuestionsController {
         parameters.showDeleted = showDeleted;
 
         var result = getQuestionByIdUseCase.execute(parameters);
-        if (result.message.isEmpty()) return ResponseEntity
+        if (result.question.isEmpty()) return ResponseEntity
                 .notFound()
                 .build();
 
-        var response = modelMapper.map(result.message.get(), QuestionResponse.class);
+        var response = questionResponseMapper
+                .questionToQuestionResponse(result.question.get());
         return ResponseEntity
                 .ok()
                 .body(response);
@@ -109,17 +109,24 @@ public class QuestionsController {
     @Autowired
     private AddQuestionUseCase addQuestionUseCase;
 
-    @RequestMapping(value = "",
+    @Autowired
+    private AddQuestionParametersMapper addQuestionParameterMapper;
+
+    @RequestMapping(value = "/topics/{id}/questions",
             method = RequestMethod.POST,
             produces = "application/json",
             consumes = "application/json")
     @ResponseBody
     public ResponseEntity<QuestionResponse> addQuestion(
+            @PathVariable("id") String topicId,
             @RequestBody AddQuestionRequest request
     ) throws Exception {
-        var parameters = modelMapper.map(request, AddQuestionParameters.class);
+        var parameters = addQuestionParameterMapper
+                .addQuestionRequestToAddQuestionParameters(request, topicId);
+
         var result = addQuestionUseCase.execute(parameters);
-        var response = modelMapper.map(result.question, QuestionResponse.class);
+        var response = questionResponseMapper
+                .questionToQuestionResponse(result.question);
         return ResponseEntity
                 .ok()
                 .body(response);
@@ -128,7 +135,10 @@ public class QuestionsController {
     @Autowired
     private UpdateQuestionUseCase updateQuestionUseCase;
 
-    @RequestMapping(value = "/{id}",
+    @Autowired
+    private UpdateQuestionParametersMapper updateQuestionParametersMapper;
+
+    @RequestMapping(value = "/questions/{id}",
             method = RequestMethod.PUT,
             produces = "application/json",
             consumes = "application/json")
@@ -137,11 +147,33 @@ public class QuestionsController {
             @PathVariable("id") String id,
             @RequestBody UpdateQuestionRequest request
     ) throws Exception {
-        var parameters = modelMapper.map(request, UpdateQuestionParameters.class);
-        parameters.id = id;
+        var parameters = updateQuestionParametersMapper
+                .updateQuestionRequestToUpdateQuestionParameters(request, id);
 
         var result = updateQuestionUseCase.execute(parameters);
-        var response = modelMapper.map(result.question, QuestionResponse.class);
+        var response = questionResponseMapper
+                .questionToQuestionResponse(result.question);
+        return ResponseEntity
+                .ok()
+                .body(response);
+    }
+
+    @Autowired
+    private ToggleQuestionUseCase toggleQuestionUseCase;
+
+    @RequestMapping(value = "/questions/{id}/toggle",
+            method = RequestMethod.PUT,
+            produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<QuestionResponse> toggleQuestion(
+            @PathVariable("id") String id
+    ) throws Exception {
+        var parameters = new ToggleQuestionParameters();
+        parameters.id = id;
+
+        var result = toggleQuestionUseCase.execute(parameters);
+        var response = questionResponseMapper
+                .questionToQuestionResponse(result.question);
         return ResponseEntity
                 .ok()
                 .body(response);
@@ -150,7 +182,7 @@ public class QuestionsController {
     @Autowired
     private DeleteQuestionUseCase deleteQuestionUseCase;
 
-    @RequestMapping(value = "/{id}",
+    @RequestMapping(value = "/questions/{id}",
             method = RequestMethod.DELETE,
             produces = "application/json")
     @ResponseBody

@@ -8,6 +8,7 @@ import com.example.demo.problems.topic.TopicNonExistsProblem;
 import com.example.demo.use.cases.topics.update.UpdateTopicParameters;
 import com.example.demo.use.cases.topics.update.UpdateTopicResult;
 import com.example.demo.use.cases.infrastructure.BaseUseCase;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class ToggleTopicUseCase
 
         var result = new ToggleTopicResult();
         result.topic = toggleTopic(unitOfWork, parameters);
+        Hibernate.initialize(result.topic.questions);
+
         return result;
     }
 

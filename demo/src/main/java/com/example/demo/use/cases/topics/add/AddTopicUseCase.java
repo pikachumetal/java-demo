@@ -4,6 +4,7 @@ import com.example.demo.domain.Topic;
 import com.example.demo.persistence.UnitOfWork;
 import com.example.demo.problems.topic.TopicDescriptionExistsProblem;
 import com.example.demo.use.cases.infrastructure.BaseUseCase;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,8 @@ public class AddTopicUseCase
 
         var result = new AddTopicResult();
         result.topic = addTopic(unitOfWork, parameters);
+        Hibernate.initialize(result.topic.questions);
+
         return result;
     }
 
@@ -36,6 +39,7 @@ public class AddTopicUseCase
             AddTopicParameters parameters
     ) {
         var repository = unitOfWork.getTopicRepository();
+
         var item = new Topic(parameters.description, parameters.email);
         return repository.save(item);
     }

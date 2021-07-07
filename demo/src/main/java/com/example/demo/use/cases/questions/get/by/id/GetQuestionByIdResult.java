@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public class GetQuestionByIdResult {
     @var
-    Optional<Question> message;
+    Optional<Question> question;
 }

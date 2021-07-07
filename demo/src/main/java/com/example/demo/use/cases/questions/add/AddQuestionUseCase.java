@@ -3,12 +3,17 @@ package com.example.demo.use.cases.questions.add;
 import com.example.demo.domain.Topic;
 import com.example.demo.domain.Question;
 import com.example.demo.persistence.UnitOfWork;
+import com.example.demo.problems.question.QuestionQueryExistsProblem;
 import com.example.demo.problems.topic.TopicInactiveProblem;
 import com.example.demo.problems.topic.TopicNonExistsProblem;
 import com.example.demo.use.cases.infrastructure.BaseUseCase;
+import com.example.demo.use.cases.questions.update.UpdateQuestionParameters;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.LinkedList;
 
 @Service("addQuestion")
 public class AddQuestionUseCase
@@ -28,9 +33,12 @@ public class AddQuestionUseCase
     ) {
         assertTopicExists(unitOfWork, parameters.topicId);
         assertTopicIsActive(unitOfWork, parameters.topicId);
+        assertQuestionQueryNonExists(unitOfWork, parameters);
 
         var result = new AddQuestionResult();
         result.question = addQuestion(unitOfWork, parameters);
+        Hibernate.initialize(result.question.topic);
+
         return result;
     }
 
@@ -40,10 +48,8 @@ public class AddQuestionUseCase
     ) {
         var repository = unitOfWork.getQuestionRepository();
 
-        var item = new Question(parameters.query, parameters.email);
-        item.answers = parameters.answers;
+        var item = new Question(parameters.query, parameters.email, parameters.answers);
         item.topic = getTopicById(unitOfWork, parameters.topicId);
-
         return repository.save(item);
     }
 
@@ -72,5 +78,19 @@ public class AddQuestionUseCase
 
         if (item.active) return;
         throw new TopicInactiveProblem(topicId);
+    }
+
+    public void assertQuestionQueryNonExists(
+            UnitOfWork unitOfWork,
+            AddQuestionParameters parameters
+    ) {
+        var repository = unitOfWork.getQuestionRepository();
+
+        var item = repository.findByQuery(parameters.topicId, parameters.query);
+
+        if (item.isEmpty()) return;
+        if (!item.get().topic.id.equals(parameters.topicId)) return;
+
+        throw new QuestionQueryExistsProblem(parameters.query);
     }
 }
