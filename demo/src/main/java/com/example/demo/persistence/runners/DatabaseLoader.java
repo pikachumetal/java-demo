@@ -1,8 +1,8 @@
 package com.example.demo.persistence.runners;
 
-import com.example.demo.domain.Author;
+import com.example.demo.domain.Category;
 import com.example.demo.persistence.UnitOfWork;
-import com.example.demo.persistence.repositories.AuthorRepository;
+import com.example.demo.persistence.repositories.CategoryRepository;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,15 +19,15 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        var repository = new AuthorRepository(unitOfWork);
+        var repository = new CategoryRepository(unitOfWork);
 
         unitOfWork.begin();
 
         var author = repository
-                .findByEmail("frodo.bolson@hobbiton.com");
+                .findByDescription("General");
 
         if (author.isEmpty()) repository
-                .save(new Author("Frodo", "Bolsón", "frodo.bolson@hobbiton.com"));
+                .save(new Category("General", "frodo.bolson@hobbiton.com"));
 
         unitOfWork.commit();
     }

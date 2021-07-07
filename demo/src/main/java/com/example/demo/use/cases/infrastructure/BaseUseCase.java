@@ -1,7 +1,7 @@
 package com.example.demo.use.cases.infrastructure;
 
-import com.example.demo.domain.Author;
-import com.example.demo.domain.Message;
+import com.example.demo.domain.Category;
+import com.example.demo.domain.Question;
 import com.example.demo.persistence.UnitOfWork;
 import com.example.demo.problems.GenericProblem;
 import org.hibernate.Session;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.zalando.problem.ThrowableProblem;
 
-import javax.persistence.Entity;
 import java.util.Arrays;
 
 public abstract class BaseUseCase<TIn, TOut> implements UseCase<TIn, TOut> {
@@ -58,13 +57,13 @@ public abstract class BaseUseCase<TIn, TOut> implements UseCase<TIn, TOut> {
                 .unwrap(Session.class);
 
         var filters = Arrays.asList(
-                Author.class.getSimpleName(),
-                Message.class.getSimpleName()
+                Category.class.getSimpleName(),
+                Question.class.getSimpleName()
         );
 
         filters.forEach(o -> session
                 .enableFilter("noDeleted%s".formatted(o))
-                .setParameter("isDeleted", false));
+                .setParameter("showDeleted", false));
     }
 
     protected abstract TOut executeImpl(UnitOfWork unitOfWork, TIn parameters);
