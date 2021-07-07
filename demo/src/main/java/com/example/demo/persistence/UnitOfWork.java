@@ -1,5 +1,7 @@
 package com.example.demo.persistence;
 
+import com.example.demo.persistence.repositories.TopicRepository;
+import com.example.demo.persistence.repositories.QuestionRepository;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
@@ -40,6 +42,13 @@ public class UnitOfWork implements AutoCloseable {
 
     public EntityManager getEntityManager() {
         return this.entityManager;
+    }
+
+    public TopicRepository getTopicRepository() {
+        return new TopicRepository(this);
+    }
+    public QuestionRepository getQuestionRepository() {
+        return new QuestionRepository(this);
     }
 
     @Override

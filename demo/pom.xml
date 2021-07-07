@@ -63,11 +63,10 @@
 			<version>${mysql.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- Model Mapper -->
 		<dependency>
-			<groupId>org.modelmapper</groupId>
-			<artifactId>modelmapper</artifactId>
-			<version>${modelmapper.version}</version>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zalando</groupId>
@@ -85,6 +84,7 @@
 		<maven.version>3.8.0</maven.version>
 		<modelmapper.version>2.4.2</modelmapper.version>
 		<problem-spring-web.version>0.26.2</problem-spring-web.version>
+		<mapstruct.version>1.4.2.Final</mapstruct.version>
 	</properties>
 	<build>
 		<plugins>
@@ -102,6 +102,11 @@
 					</compilerArgs>
 					<!-- Add the processor path for the plugin -->
 					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
 						<path>
 							<groupId>systems.manifold</groupId>
 							<artifactId>manifold-props</artifactId>

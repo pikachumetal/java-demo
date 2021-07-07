@@ -1,14 +1,13 @@
 package com.example.demo.persistence.repositories;
 
 import com.example.demo.domain.AggregateRoot;
-import com.example.demo.domain.Author;
 import com.example.demo.persistence.UnitOfWork;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-public class BaseRepository<T extends AggregateRoot<ID>, ID> {
+public abstract class BaseRepository<T extends AggregateRoot<ID>, ID> {
     protected final EntityManager entityManager;
     protected final Class<T> repositoryClass;
 
@@ -20,7 +19,7 @@ public class BaseRepository<T extends AggregateRoot<ID>, ID> {
     public List<T> findAll() {
         var criteriaBuilder = entityManager.getCriteriaBuilder();
         var criteriaQuery = criteriaBuilder.createQuery(repositoryClass);
-        var author = criteriaQuery.from(repositoryClass);
+        criteriaQuery.from(repositoryClass);
 
         var query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
@@ -30,9 +29,9 @@ public class BaseRepository<T extends AggregateRoot<ID>, ID> {
         var criteriaBuilder = entityManager.getCriteriaBuilder();
         var criteriaQuery = criteriaBuilder.createQuery(repositoryClass);
 
-        var author = criteriaQuery.from(repositoryClass);
+        var root = criteriaQuery.from(repositoryClass);
 
-        var idPredicate = criteriaBuilder.equal(author.get("id"), id);
+        var idPredicate = criteriaBuilder.equal(root.get("id"), id);
         criteriaQuery.where(idPredicate);
 
         var query = entityManager.createQuery(criteriaQuery);
@@ -44,7 +43,7 @@ public class BaseRepository<T extends AggregateRoot<ID>, ID> {
         else this.entityManager.merge(item);
 
         entityManager.flush();
-        return findById((ID) item.getId()).orElseThrow();
+        return findById(item.getId()).orElseThrow();
     }
 
     public void delete(ID id) {

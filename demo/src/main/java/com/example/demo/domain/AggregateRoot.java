@@ -11,7 +11,7 @@ import java.time.Instant;
 
 @MappedSuperclass
 // @Where(clause = "deleted = false")
-// @SQLDelete(sql = "UPDATE authors SET deleted=true WHERE id=? AND deleted=false")
+// @SQLDelete(sql = "UPDATE topics SET deleted=true WHERE id=? AND deleted=false")
 // @FilterDef(name = "deletedCarFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
 // @Filter(name = "deletedCarFilter", condition = "deleted = :isDeleted")
 public abstract class AggregateRoot<ID> implements Serializable, Persistable<ID> {
@@ -52,10 +52,10 @@ public abstract class AggregateRoot<ID> implements Serializable, Persistable<ID>
     @Column(name = "created_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = false)
     @CreationTimestamp
     @var
-    Instant createdAt;
+    Instant created;
 
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = true)
     @UpdateTimestamp
     @var
-    Instant updatedAt;
+    Instant updated;
 }
