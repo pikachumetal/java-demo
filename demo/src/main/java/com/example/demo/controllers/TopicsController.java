@@ -21,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.stream.Collectors;
 
 @RestController
@@ -91,7 +95,7 @@ public class TopicsController {
             consumes = "application/json")
     @ResponseBody
     public ResponseEntity<TopicResponse> addTopic(
-            @RequestBody AddTopicRequest request
+            @Valid @RequestBody AddTopicRequest request
     ) throws Exception {
         var parameters = addTopicParameterMapper
                 .addTopicRequestToAddTopicParameters(request);
@@ -117,7 +121,7 @@ public class TopicsController {
     @ResponseBody
     public ResponseEntity<TopicResponse> updateAuthor(
             @PathVariable("id") String id,
-            @RequestBody UpdateTopicRequest request
+            @RequestBody @Valid UpdateTopicRequest request
     ) throws Exception {
         var parameters = updateTopicParametersMapper
                 .updateTopicRequestToUpdateTopicParameters(request, id);
