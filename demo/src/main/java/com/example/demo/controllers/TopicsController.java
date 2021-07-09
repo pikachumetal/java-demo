@@ -19,6 +19,7 @@ import com.example.demo.use.cases.topics.toggle.ToggleTopicUseCase;
 import com.example.demo.use.cases.topics.update.UpdateTopicUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
