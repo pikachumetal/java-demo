@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.example.demo.configurations.DatabaseConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -18,29 +19,31 @@ import java.util.stream.Collectors;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = ErrorMvcAutoConfiguration.class)
+@Slf4j
 public class DemoApplication {
     @Autowired
     private DatabaseConfiguration databaseConfiguration;
 
     public static void main(String[] args) {
+        System.setProperty("spring.profiles.active", "problem");
         SpringApplication.run(DemoApplication.class, args);
     }
 
     @PostConstruct
     public void display() {
-        System.out.println("*** Read from Property file ***");
-        System.out.printf("Url      : %s%n", databaseConfiguration.url);
-        System.out.printf("Driver   : %s%n", databaseConfiguration.driverClassName);
-        System.out.printf("Username : %s%n", databaseConfiguration.username);
-        System.out.printf("Password : %s%n", databaseConfiguration.password);
+        log.info("*** Read from Property file ***");
+        log.info("Url      : " + databaseConfiguration.url);
+        log.info("Driver   : " + databaseConfiguration.driverClassName);
+        log.info("Username : " + databaseConfiguration.username);
+        log.info("Password : " + databaseConfiguration.password);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public List<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        return ex.getBindingResult()
-                .getAllErrors().stream()
-                .map(ObjectError::getDefaultMessage)
-                .collect(Collectors.toList());
-    }
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public List<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+//        return ex.getBindingResult()
+//                .getAllErrors().stream()
+//                .map(ObjectError::getDefaultMessage)
+//                .collect(Collectors.toList());
+//    }
 }
