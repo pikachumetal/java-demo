@@ -25,7 +25,7 @@ public class DatabaseConfiguration {
 
     @Bean(name = "mySqlDataSource")
     @Primary
-    public DataSource dataSource() throws Exception {
+    public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
         dataSource.setDriverClassName(driverClassName);

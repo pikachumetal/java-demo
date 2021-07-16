@@ -1,6 +1,6 @@
-drop table IF EXISTS messages;
+drop table IF EXISTS questions;
 
-create TABLE messages(
+create TABLE questions(
     id char(36) ,
     author_id CHAR(36) NOT NULL,
     title VARCHAR(128) NOT NULL,
